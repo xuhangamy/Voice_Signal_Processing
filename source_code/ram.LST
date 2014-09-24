@@ -1,0 +1,88 @@
+C51 COMPILER V7.50   RAM                                                                   01/04/2014 20:23:25 PAGE 1   
+
+
+C51 COMPILER V7.50, COMPILATION OF MODULE RAM
+OBJECT MODULE PLACED IN ram.OBJ
+COMPILER INVOKED BY: D:\Keil\C51\BIN\C51.EXE ram.c BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          #include<reg52.h>
+   2          #include <absacc.h>
+   3          #define RAM   XBYTE[0x0000] 
+   4          
+   5          #define CS0             XBYTE[0xf8ff]
+   6          #define CS1             XBYTE[0xf9ff]
+   7          #define CS2             XBYTE[0xfaff]
+   8          #define CS3             XBYTE[0xfbff]
+   9          #define CS4             XBYTE[0xfcff]
+  10          #define CS5             XBYTE[0xfdff]
+  11          #define CS6             XBYTE[0xfeff]
+  12          #define CS7             XBYTE[0xffff]
+  13          #define CS_LED_SEG      CS2
+  14          #define CS_LED_SEL      CS3
+  15          #define CS_LED          P1
+  16          #define uchar           unsigned char
+  17          #define uint            unsigned  int
+  18          uchar code str_num[10]={0x3f,0x06,0x5b,0x4f,0x66,0x6d,0x7c,0x07,0x7f,0x67};
+  19          uchar dis[3];
+  20          uint s;
+  21          
+  22          void delay_ms(uint dl)
+  23          {
+  24   1              uint cnt,k;
+  25   1              for(cnt=0;cnt<dl;cnt++)
+  26   1              {
+  27   2                      for(k=0;k<125;k++);
+  28   2              }
+  29   1      }
+  30          
+  31          void LED_light(uchar num)
+  32          {
+  33   1               dis[0]=(uchar)(num/100);
+  34   1           dis[1]=(uchar)((num-dis[0]*100)/10);
+  35   1           dis[2]=(uchar)(num-dis[0]*100-dis[1]*10);
+  36   1                for(s=0;s<3;s++)
+  37   1                        {
+  38   2                    CS_LED_SEL=(0XFB>>s)|0XF8;
+  39   2                    CS_LED_SEG=str_num[dis[s]];       
+  40   2                        }
+  41   1      }
+  42          
+  43          uchar xdata *pl=&RAM;
+  44          
+  45          
+  46          void main()
+  47          {
+  48   1              uint i,j;
+  49   1              uchar shownum;
+  50   1              for(i=0;i<256;i++)
+  51   1          {
+  52   2              *(pl+i)=i;
+  53   2              }
+  54   1              delay_ms(5);
+  55   1              while(1)
+C51 COMPILER V7.50   RAM                                                                   01/04/2014 20:23:25 PAGE 2   
+
+  56   1              {
+  57   2                      for(j=0;j<256;j++)
+  58   2                      {
+  59   3                      shownum=*(pl+j);
+  60   3                      LED_light(shownum);
+  61   3                      }
+  62   2              }
+  63   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    204    ----
+   CONSTANT SIZE    =     10    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      7       2
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
